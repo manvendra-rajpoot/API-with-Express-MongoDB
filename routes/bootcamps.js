@@ -1,23 +1,9 @@
 const express = require('express');
 const router = express.Router();
 
-router.get('/', (req,res) => {
-    res.status(200).json({success: true, message:'Show all bootcmaps'});
-});
-router.get('/:id', (req,res) => {
-    res.status(200).json({success: true, message:`Dispaly bootcamp-${req.params.id}`});
-});
+const {getBootcamps,getBootcamp,createBootcamp,updateBootcamp,deleteBootcamp} = require('../controllers/bootcamps');
 
-router.post('/', (req,res) => {
-    res.status(201).json({success: true, message:'Created a bootcmap'});
-});
-
-router.put('/:id', (req,res) => {
-    res.status(200).json({success: true, message:`Updated bootcamp-${req.params.id}`});
-});
-
-router.delete('/:id', (req,res) => {
-    res.status(200).json({success: true, message:`Deleted bootcmap-${req.params.id}`});
-});
+router.route('/').get(getBootcamps).post(createBootcamp);
+router.route('/:id').get(getBootcamp).put(updateBootcamp).delete(deleteBootcamp);
 
 module.exports = router;
