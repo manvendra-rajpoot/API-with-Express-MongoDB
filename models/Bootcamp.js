@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const BootcampSchema = new mongoose.Schema({
     name: {
         type: String,
-        required: [true, 'Enter the name'],
+        required: [true, 'Enter the name..'],
         unique: true,
         trim: true,
         maxlength: [50, 'Name should be less 50 characters..']
@@ -11,7 +11,7 @@ const BootcampSchema = new mongoose.Schema({
     slug: String,
     description: {
         type: String,
-        required: [true, 'Add the description'],
+        required: [true, 'Add the description..'],
         maxlength: [200, 'Description not more than 200 characters..']
     },
     website: {
