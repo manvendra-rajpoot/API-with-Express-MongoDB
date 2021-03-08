@@ -4,10 +4,9 @@ const errorHandler = (err,req,res,next) => {
     let error = {... err};
     error.message = err.message;
     
+    //for observation
     console.log(err.stack.red);
-    console.log('ERROR-----------\n',err);
-    console.log('--------------\n');
-
+    
     //mongoose incorrect objectId 
     if(err.name === 'CastError'){
         const message = `Resource with id:${err.value} is Not Found! `;
