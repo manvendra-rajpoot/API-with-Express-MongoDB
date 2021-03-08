@@ -8,7 +8,7 @@ const connectDB = async () => {
         useUnifiedTopology: true
     });
 
-    console.log(`Mongoose connected, ${conn.connection.host}`);
+    console.log(`Mongoose connected: ${conn.connection.host}`.cyan.bold.bgBlack);
 }
 
 module.exports = connectDB;
