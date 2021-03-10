@@ -8,13 +8,45 @@ const geocoder = require('../utils/geocoder');
 //@route         GET /api/v1/bootcamps
 //@access        Public
 exports.getBootcamps = asyncHandler( async (req, res, next) => {
-        const bootcamps = await Bootcamp.find();
+    //copying req.query
+    const reqQuery = {...req.query};
 
-        res.status(200).json({
-            success: true,
-            count: bootcamps.length,
-            data: bootcamps 
-        }); 
+    //fields to exclude from filtering
+    const removeFields = ['select','sort'];
+    removeFields.forEach(field => delete reqQuery[field]);
+    console.log(reqQuery);
+
+    //creating query string
+    let queryStr = JSON.stringify(reqQuery);
+
+    //creating operators like as $gt, $lt, etc..
+    queryStr = queryStr.replace(/\b(gt|gte|lt|lte|eq|ne|in|nin)\b/g, match => `$${match}`); // a/c to docs we need "$" before operators
+    /*console.log(queryStr);*/
+
+    //finding resources
+    let query = Bootcamp.find(JSON.parse(queryStr));
+
+    //selecting fields to send back to client as per requirement
+    if (req.query.select) {
+        const selectBy = req.query.select.split(',').join(' '); 
+        query = query.select(selectBy); 
+    }
+    //sorting fields to send back to client as per requirement
+    if (req.query.sort) {
+        const sortBy = req.query.sort.split(',').join(' '); 
+        query = query.sort(sortBy); 
+    } else {
+        query = query.sort('-createdAt');//default sort & "-" means in descending order 
+    }
+
+
+    const bootcamps = await query;
+
+    res.status(200).json({
+        success: true,
+        count: bootcamps.length,
+        data: bootcamps 
+    }); 
 });
 
 //@describe      Get a bootcamp
