@@ -19,6 +19,7 @@ app.use(express.json());
 
 //route files
 const bootcamps = require('./routes/bootcamps');
+const courses = require('./routes/courses');
 
 //dev logging middleware
 if (process.env.NODE_ENV === 'development') {
@@ -27,6 +28,7 @@ if (process.env.NODE_ENV === 'development') {
 
 //mount rounters
 app.use('/api/v1/bootcamps', bootcamps);
+app.use('/api/v1/courses', courses);
 
 //middleware for errors
 app.use(errorHandler);
