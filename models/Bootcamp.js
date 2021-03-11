@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
 const geocoder = require('../utils/geocoder');
+const colors = require('colors');
+
 
 const BootcampSchema = new mongoose.Schema({
     name: {
@@ -104,6 +106,9 @@ const BootcampSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     }
+}, {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
 });
 
 //create bootcamp slug from name
@@ -129,6 +134,22 @@ BootcampSchema.pre('save', async function (next) {
     this.address = undefined;
 
     next();
+});
+
+//Cascade DELETE courses related to a bootcamp
+BootcampSchema.pre('remove', async function (next) {
+    console.log(`Courses being removed from bootcamp of id:${this._id}..`.magenta);
+    await this.model('Course').deleteMany({ bootcamp: this._id });
+    next();
+});
+/* Npte: 'remove' middleware doesnot work with Bootcamp.findByIdAndDelete() we need  Bootcamp.findById() & bootcamp.remove to make it work, so modify accordingly in ../controllers/bootcamps */
+
+//reverse populate bootcamp with courses by virtuals
+BootcampSchema.virtual('courses', {
+    ref: 'Course',
+    localField: '_id',
+    foreignField: 'bootcamp',
+    justOne: false,
 });
 
 
