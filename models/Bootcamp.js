@@ -132,7 +132,7 @@ BootcampSchema.pre('save', async function (next) {
     }
     //don't save address in DB
     this.address = undefined;
-
+    
     next();
 });
 
@@ -144,12 +144,20 @@ BootcampSchema.pre('remove', async function (next) {
 });
 /* Npte: 'remove' middleware doesnot work with Bootcamp.findByIdAndDelete() we need  Bootcamp.findById() & bootcamp.remove to make it work, so modify accordingly in ../controllers/bootcamps */
 
-//reverse populate bootcamp with courses by virtuals
+
+//reverse populate bootcamp with courses using virtuals
 BootcampSchema.virtual('courses', {
     ref: 'Course',
     localField: '_id',
     foreignField: 'bootcamp',
     justOne: false,
+});
+//reverse populate bootcamp with noOfCourses in it using virtuals
+BootcampSchema.virtual('noOfCourses', {
+    ref: 'Course',
+    localField: '_id',
+    foreignField: 'bootcamp',
+    count: true,
 });
 
 
