@@ -10,16 +10,18 @@ const courseRouter = require('./courses');
 
 const router = express.Router();
 
+const { protect } = require('../middlewares/auth');
+
 //Re-route into other resource router
 router.use('/:bootcampId/courses', courseRouter); //this take us to './courses.js'
 
 router.route('/radius/:zipcode/:distance').get(getBootcampsInRadius);
 
-router.route('/:id').get(getBootcamp).put(updateBootcamp).delete(deleteBootcamp);
+router.route('/:id').get(getBootcamp).put(protect, updateBootcamp).delete(protect, deleteBootcamp);
 
-router.route('/:id/photo').put(bootcampPhotoUpload);
+router.route('/:id/photo').put(protect, bootcampPhotoUpload);
 
-router.route('/').get(advancedSearch(Bootcamp, 'courses'), getBootcamps).post(createBootcamp);
+router.route('/').get(advancedSearch(Bootcamp, 'courses'), getBootcamps).post(protect, createBootcamp);
 
 
 module.exports = router;
