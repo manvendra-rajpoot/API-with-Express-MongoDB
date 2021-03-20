@@ -49,10 +49,18 @@ exports.getCourse = asyncHandler( async (req, res, next) => {
 //@access        Private
 exports.createCourse = asyncHandler( async (req, res, next) => {
     req.body.bootcamp = req.params.bootcampId; //we want our Object to get registered at bootcamp of course model
+    req.body.user = req.user.id;
+
     const bootcamp = await Bootcamp.findById(req.params.bootcampId);
     
     if (!bootcamp) {
         return next(new ErrorResponse(`No bootcamp with id:${req.params.bootcampId} is Found!`,404));
+    }
+
+    //checking if user is bootcamp owner
+    if (bootcamp.user.toString() !== req.user.id && req.user.role !== 'admin' ) {
+        //This checks that user is the owner & nt in admon role 
+        return next(new ErrorResponse(`User of Id:${req.user.id} is not authorized to add course to this bootcamp of Id:${bootcamp._id}`, 401));
     }
 
     const course = await Course.create(req.body); 
@@ -71,6 +79,12 @@ exports.updateCourse = asyncHandler( async (req, res, next) => {
     
     if (!course) {
         return next(new ErrorResponse(`No course with id:${req.params.id} is Found!`,404));
+    }
+
+    //checking if user is course owner
+    if (course.user.toString() !== req.user.id && req.user.role !== 'admin' ) {
+        //This checks that user is the owner & nt in admon role 
+        return next(new ErrorResponse(`User of Id:${req.user.id} is not authorized to do this so!`, 401));
     }
 
     course = await Course.findByIdAndUpdate(req.params.id, req.body, {
@@ -93,6 +107,13 @@ exports.deleteCourse = asyncHandler( async (req, res, next) => {
     if (!course) {
         return next(new ErrorResponse(`No course with id:${req.params.id} is Found!`,404));
     }
+    
+    //checking if user is course owner
+    if (course.user.toString() !== req.user.id && req.user.role !== 'admin' ) {
+        //This checks that user is the owner & nt in admon role 
+        return next(new ErrorResponse(`User of Id:${req.user.id} is not authorized to do this so!`, 401));
+    }
+
     await course.remove();
 
     res.status(200).json({
