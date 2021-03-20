@@ -51,6 +51,45 @@ exports.login = asyncHandler(async (req,res,next) => {
     sendTokenResponse(user, 200, res);
 });
 
+//@describe      update details
+//@route         PUT /api/v1/auth/updatedetails
+//@access        Private
+exports.updateDetails = asyncHandler(async (req,res,next) => {
+    const fieldsToUpdate = {
+        name: req.body.name,
+        email: req.body.email,
+    }
+    
+    const user = await User.findByIdAndUpdate(req.user.id, fieldsToUpdate, {
+        new: true,
+        runValidators: true,
+    }); 
+
+    res.status(200).json({
+        success: true,
+        data: user,
+    });
+});
+
+//@describe      change pswd
+//@route         PUT /api/v1/auth/changepassword
+//@access        Private
+exports.changePassword = asyncHandler(async (req,res,next) => {
+    const user = await User.findById(req.user.id).select('+password'); 
+
+    //check curr password
+    const isMatch = await user.matchPassword(req.body.currPassword);
+
+    if(!isMatch){
+        return next(new ErrorResponse('Invalid credentials..',401));
+    }
+
+    user.password = req.body.newPassword;
+    await user.save();
+
+    sendTokenResponse(user, 200, res);
+});
+
 //@describe      Get a current logged User
 //@route         GET /api/v1/auth/me
 //@access        Public
