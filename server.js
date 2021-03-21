@@ -6,6 +6,9 @@ const path = require('path');
 const mongoSanitize = require('express-mongo-sanitize');
 const helmet = require("helmet");
 const xss = require('xss-clean');
+const rateLimit = require("express-rate-limit");
+const hpp = require('hpp');
+const cors = require('cors');
 const fileupload = require('express-fileupload');
 const cookieParser = require('cookie-parser');
 const connectDB = require('./config/db');
@@ -47,6 +50,19 @@ app.use(helmet());
 /* make sure this comes before any routes */
 //prevent XXS attacks
 app.use(xss());
+
+//rate limiting i.e, API per min
+const limiter = rateLimit({
+    windowMs: 10 * 60 * 1000, // 10 minutes
+    max: 100 // limit each IP to 100 requests per windowMs
+});
+app.use(limiter); // apply to all requests
+
+//protect against HTTP Parameter Pollution attacks
+app.use(hpp());
+
+//enable CORS
+app.use(cors());
 
 //cookie parser
 app.use(cookieParser());
