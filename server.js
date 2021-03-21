@@ -4,6 +4,8 @@ const morgan = require('morgan');
 const colors = require('colors');
 const path = require('path');
 const mongoSanitize = require('express-mongo-sanitize');
+const helmet = require("helmet");
+const xss = require('xss-clean');
 const fileupload = require('express-fileupload');
 const cookieParser = require('cookie-parser');
 const connectDB = require('./config/db');
@@ -39,7 +41,14 @@ app.use(fileupload());
 //sanitize data
 app.use(mongoSanitize());
 
-//File uploader
+//secure your Express apps by setting various HTTP headers
+app.use(helmet());
+
+/* make sure this comes before any routes */
+//prevent XXS attacks
+app.use(xss());
+
+//cookie parser
 app.use(cookieParser());
 
 //set static folder
