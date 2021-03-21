@@ -7,13 +7,14 @@ const jwt = require('jsonwebtoken');
 exports.protect = asyncHandler (async (req,res,next) => {
     let token;
 
+    /*If token is not found in header then it looks into cookies to serch it... */
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-        token = req.headers.authorization.split(' ')[1];
+        token = req.headers.authorization.split(' ')[1]; /*set token from Bearer Token in header*/
     }
 
-    // else if (req.cookies.token) {
-    //     token = req.cookies.token;
-    // }
+    else if (req.cookies.token) {
+        token = req.cookies.token; /*set token from cookie*/
+    }
 
     //make sure token exists
     if (!token) {
