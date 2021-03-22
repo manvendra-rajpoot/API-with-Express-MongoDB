@@ -23,5 +23,9 @@ npm run devStart
 npm start
 ```
 
+[Link to Postman Published Docs...](https://documenter.getpostman.com/view/14216152/Tz5wVtoZ)
+
+![postman published](./_screenshots/postman_published.png)
+
 - Version: 1.0.0
 - Lisence: MIT
